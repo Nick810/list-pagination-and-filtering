@@ -48,46 +48,78 @@ function showPage(list, page) {
   });
 }
 
-showPage(studentItems, 1)
-
-
 /***
    Create the `appendPageLinks function` to generate, append, and add
    functionality to the pagination buttons.
 ***/
 function appendPageLinks(list) {
+  const totalPage = Math.ceil(list.length / itemsPerPage);
   let div = document.createElement('div');
   let ul = document.createElement('ul');
-  let pagination = `
-    <div class="pagination">
-      <ul>
-        <li>
-          <a class="active" href="#">1</a>
-        </li>
-         <li>
-          <a href="#">2</a>
-        </li>
-         <li>
-          <a href="#">3</a>
-        </li>
-         <li>
-          <a href="#">4</a>
-        </li>
-         <li>
-          <a href="#">5</a>
-        </li>
-        <li>
-          <a href="#">6</a>
-       </li>
-      </ul>
-    </div>
-  `;
+  for (let i=0; i<totalPage; i++) {
+    let li = document.createElement('li');
+    let aLink = document.createElement('a');
+    aLink.setAttribute('href', '#');
+    aLink.textContent = i + 1;
+    aLink.addEventListener('click', (e) => {
+      if (e.target.getAttribute('class') === null) {
+        document.querySelectorAll('.pagination a').forEach(element => element.removeAttribute('class'));
+      }
+      e.target.setAttribute('class', 'active');
+      showPage(studentItems, parseInt(e.target.textContent));
+    }, false);
+    li.appendChild(aLink);
+    ul.appendChild(li);
+  }
+  ul.firstElementChild.firstElementChild.setAttribute('class', 'active')
   div.className = 'pagination';
-  // page.appendChild(pagination);
-  // const pageLinks = document.querySelector('.pagination a');
+  div.appendChild(ul)
+  page.appendChild(div);
 }
 
+function appendSearchBar() {
+  let div = document.createElement('div');
+  div.className = 'student-search';
+  div.innerHTML = `
+      <input placeholder="Search for students...">
+      <button>Search</button>
+    `;
+  const searchInput = div.firstElementChild;
+  const searchButton = div.lastElementChild;
+  searchInput.addEventListener('input', () => {
+    searchStudent(searchInput);
+  }, false);
+  searchButton.addEventListener('click', () => {
+    searchStudent(searchInput);
+  }, false);
+  page.firstElementChild.appendChild(div);
+}
+
+function searchStudent(element) {
+  const searchResults = [];
+  const studentNames = document.querySelectorAll('.student-details h3');
+  for (let i=0; i<studentNames.length; i++) {
+    if (studentNames[i].textContent.includes(element.value.toLowerCase())) {
+      studentNames[i].parentElement.parentElement.style.display = 'block';
+    } else {
+      studentNames[i].parentElement.parentElement.style.display = 'none';
+    }
+    for (let i=0; i<studentItems.length; i++) {
+      if (studentItems[i].getAttribute('style') === 'display: none;') {
+        searchResults.push(studentItems[i]);
+      }
+    }
+  }
+  if (searchResults.length === 0) {
+    console.log('sorry');
+  }
+  // Sorry, no results found - try a different search
+}
+
+
+showPage(studentItems, 1);
 appendPageLinks(studentItems);
+appendSearchBar();
 
 
 
