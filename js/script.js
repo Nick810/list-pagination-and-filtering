@@ -3,39 +3,13 @@ Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
 
-// Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
-
-
-/***
-   Add your global variables that store the DOM elements you will
-   need to reference and/or manipulate.
-
-   But be mindful of which variables should be global and which
-   should be locally scoped to one of the two main functions you're
-   going to create. A good general rule of thumb is if the variable
-   will only be used inside of a function, then it can be locally
-   scoped to that function.
-***/
+// Variable Declarations
 const page = document.querySelector('.page');
 const studentItems = document.querySelectorAll('.student-item')
 const itemsPerPage = 10;
 
-
-
-/***
-   Create the `showPage` function to hide all of the items in the
-   list except for the ten you want to show.
-
-   Pro Tips:
-     - Keep in mind that with a list of 54 students, the last page
-       will only display four.
-     - Remember that the first student has an index of 0.
-     - Remember that a function `parameter` goes in the parens when
-       you initially define the function, and it acts as a variable
-       or a placeholder to represent the actual function `argument`
-       that will be passed into the parens later when you call or
-       "invoke" the function
-***/
+// ----- Functions ----- //
+// Show items per page by their indexes
 function showPage(list, page) {
   const startIndex = (page * itemsPerPage) - itemsPerPage;
   const endIndex = page * itemsPerPage;
@@ -48,10 +22,9 @@ function showPage(list, page) {
   });
 }
 
-/***
-   Create the `appendPageLinks function` to generate, append, and add
-   functionality to the pagination buttons.
-***/
+// Append pagination to the bottom of the page + calculate the total page needs
+// by diving total students by items per page
+// Manage active state of paginations links when clicked
 function appendPageLinks(list) {
   const totalPage = Math.ceil(list.length / itemsPerPage);
   let div = document.createElement('div');
@@ -77,6 +50,7 @@ function appendPageLinks(list) {
   page.appendChild(div);
 }
 
+// Append search bar to the page + addEventListener to buttons and search box
 function appendSearchBar() {
   let div = document.createElement('div');
   div.className = 'student-search';
@@ -86,6 +60,7 @@ function appendSearchBar() {
     `;
   const searchInput = div.firstElementChild;
   const searchButton = div.lastElementChild;
+  searchButton.style.cursor = 'pointer';
   searchInput.addEventListener('input', () => {
     searchStudent(searchInput);
   }, false);
@@ -95,33 +70,44 @@ function appendSearchBar() {
   page.firstElementChild.appendChild(div);
 }
 
+// Searching function for live searching and when the button 'search' is clicked
+// Show paginations upon search items found
+// Display 'search not found' message when no search results is equal to 0
+// Manage items per page if the search bar is empty
 function searchStudent(element) {
   const searchResults = [];
   const studentNames = document.querySelectorAll('.student-details h3');
+
   for (let i=0; i<studentNames.length; i++) {
     if (studentNames[i].textContent.includes(element.value.toLowerCase())) {
       studentNames[i].parentElement.parentElement.style.display = 'block';
+      searchResults.push(studentNames[i].parentElement.parentElement);
     } else {
       studentNames[i].parentElement.parentElement.style.display = 'none';
     }
-    for (let i=0; i<studentItems.length; i++) {
-      if (studentItems[i].getAttribute('style') === 'display: none;') {
-        searchResults.push(studentItems[i]);
-      }
-    }
   }
+
   if (searchResults.length === 0) {
-    console.log('sorry');
+    const h4 = document.createElement('h4');
+    h4.textContent = 'Sorry, no results found - try a different search';
+    page.removeChild(page.lastElementChild);
+    page.appendChild(h4);
+  } else {
+    page.removeChild(page.lastElementChild);
+    appendPageLinks(searchResults)
   }
-  // Sorry, no results found - try a different search
+
+  if (element.value === '') {
+    showPage(studentItems, 1);
+  }
 }
 
-
+// ----- Function Calls prior to page loads ----- //
+//  Show 10 students per page
 showPage(studentItems, 1);
+
+//  Append paginations to a page
 appendPageLinks(studentItems);
+
+// Append search bar
 appendSearchBar();
-
-
-
-
-// Remember to delete the comments that came with this file, and replace them with your own code comments.
