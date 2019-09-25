@@ -39,7 +39,7 @@ function appendPageLinks(list) {
         document.querySelectorAll('.pagination a').forEach(element => element.removeAttribute('class'));
       }
       e.target.setAttribute('class', 'active');
-      showPage(studentItems, parseInt(e.target.textContent));
+      showPage(list, parseInt(e.target.textContent));
     }, false);
     li.appendChild(aLink);
     ul.appendChild(li);
@@ -79,11 +79,11 @@ function searchStudent(element) {
   const studentNames = document.querySelectorAll('.student-details h3');
 
   for (let i=0; i<studentNames.length; i++) {
+    studentNames[i].parentElement.parentElement.style.display = 'none';
     if (studentNames[i].textContent.includes(element.value.toLowerCase())) {
+      console.log(studentNames[i].textContent);
       studentNames[i].parentElement.parentElement.style.display = 'block';
       searchResults.push(studentNames[i].parentElement.parentElement);
-    } else {
-      studentNames[i].parentElement.parentElement.style.display = 'none';
     }
   }
 
@@ -94,11 +94,8 @@ function searchStudent(element) {
     page.appendChild(h4);
   } else {
     page.removeChild(page.lastElementChild);
-    appendPageLinks(searchResults)
-  }
-
-  if (element.value === '') {
-    showPage(studentItems, 1);
+    showPage(searchResults, 1);
+    appendPageLinks(searchResults);
   }
 }
 
