@@ -81,7 +81,6 @@ function searchStudent(element) {
   for (let i=0; i<studentNames.length; i++) {
     studentNames[i].parentElement.parentElement.style.display = 'none';
     if (studentNames[i].textContent.includes(element.value.toLowerCase())) {
-      console.log(studentNames[i].textContent);
       studentNames[i].parentElement.parentElement.style.display = 'block';
       searchResults.push(studentNames[i].parentElement.parentElement);
     }
